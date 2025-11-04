@@ -83,9 +83,30 @@ class WebSearchTool(MCPTool):
         max_results = arguments.get("max_results", 5)
         region = arguments.get("region", "en-us")
         
+        # Validate parameters
         if not query:
             return {
                 "error": "Query parameter is required"
+            }
+        
+        if not isinstance(query, str) or len(query.strip()) == 0:
+            return {
+                "error": "Query must be a non-empty string"
+            }
+        
+        if not isinstance(max_results, int) or max_results <= 0:
+            return {
+                "error": "max_results must be a positive integer"
+            }
+        
+        if max_results > 20:  # Set reasonable limit
+            return {
+                "error": "max_results cannot exceed 20"
+            }
+        
+        if not isinstance(region, str):
+            return {
+                "error": "region must be a string"
             }
         
         try:
@@ -147,9 +168,30 @@ class WebScrapeTool(MCPTool):
         url = arguments.get("url", "")
         max_words = arguments.get("max_words", 1000)
         
+        # Validate parameters
         if not url:
             return {
                 "error": "URL parameter is required"
+            }
+        
+        if not isinstance(url, str) or len(url.strip()) == 0:
+            return {
+                "error": "URL must be a non-empty string"
+            }
+        
+        if not url.startswith(("http://", "https://")):
+            return {
+                "error": "URL must start with http:// or https://"
+            }
+        
+        if not isinstance(max_words, int) or max_words <= 0:
+            return {
+                "error": "max_words must be a positive integer"
+            }
+        
+        if max_words > 1000:  # Set reasonable limit
+            return {
+                "error": "max_words cannot exceed 10000"
             }
         
         try:
@@ -227,9 +269,40 @@ class ImageGenerationTool(MCPTool):
         width = arguments.get("width", 1024)
         height = arguments.get("height", 1024)
         
+        # Validate parameters
         if not prompt:
             return {
                 "error": "Prompt parameter is required"
+            }
+        
+        if not isinstance(prompt, str) or len(prompt.strip()) == 0:
+            return {
+                "error": "Prompt must be a non-empty string"
+            }
+        
+        if not isinstance(model, str):
+            return {
+                "error": "Model must be a string"
+            }
+        
+        if not isinstance(width, int) or width <= 0:
+            return {
+                "error": "Width must be a positive integer"
+            }
+        
+        if width > 2048:  # Set reasonable limit
+            return {
+                "error": "Width cannot exceed 2048 pixels"
+            }
+        
+        if not isinstance(height, int) or height <= 0:
+            return {
+                "error": "Height must be a positive integer"
+            }
+        
+        if height > 2048:  # Set reasonable limit
+            return {
+                "error": "Height cannot exceed 2048 pixels"
             }
         
         try:
@@ -269,6 +342,12 @@ class ImageGenerationTool(MCPTool):
                 }
             
             image_url = image_data.url
+            
+            # Validate that image_url is a string
+            if not isinstance(image_url, str):
+                return {
+                    "error": "Image generation failed: Invalid image URL format"
+                }
             
             # Return result based on URL type
             if image_url.startswith('data:'):
@@ -440,14 +519,9 @@ class TextToAudioTool(MCPTool):
             else:
                 encoded_prompt = prompt.replace(" ", "%20")  # Basic space encoding
             
-            # Construct the Pollinations AI text-to-speech URL
-            audio_url = f"/backend-api/v2/create?provider=Gemini&model=gemini-audio&cache=true&prompt={encoded_prompt}"
-
-            if arguments.get("origin"):
-                audio_url = f"{arguments.get('origin')}{audio_url}"
-                async with ClientSession() as session:
-                    async with session.get(audio_url, max_redirects=0) as resp:
-                        audio_url = str(resp.url)
+            # Using Pollinations AI for text-to-audio generation
+            # Construct the API URL for Pollinations AI audio generation
+            audio_url = f"https://audio.pollinations.ai/audio?text={encoded_prompt}&voice={voice}"
             
             return {
                 "prompt": prompt,
@@ -459,3 +533,5 @@ class TextToAudioTool(MCPTool):
             return {
                 "error": f"Text-to-speech URL generation failed: {str(e)}"
             }
+
+

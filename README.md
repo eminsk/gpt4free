@@ -205,7 +205,7 @@ python -m g4f.cli gui --port 8080 --debug
 ```
 
 ### MCP Server
-GPT4Free now includes a Model Context Protocol (MCP) server that allows AI assistants like Claude to access web search, scraping, and image generation capabilities.
+GPT4Free now includes a Model Context Protocol (MCP) server that allows AI assistants like Claude to access web search, scraping, image generation, code generation, file operations, Git operations, and other capabilities.
 
 **Starting the MCP server (stdio mode):**
 ```bash
@@ -222,7 +222,7 @@ python -m g4f.mcp
 g4f mcp --http --port 8765
 
 # Custom host and port
-g4f mcp --http --host 127.0.0.1 --port 3000
+g4f mcp --http --host 127.0.0.1 --port 300
 ```
 
 HTTP mode provides:
@@ -244,9 +244,18 @@ Add to your `claude_desktop_config.json`:
 ```
 
 **Available MCP Tools:**
-- `web_search` - Search the web using DuckDuckGo
-- `web_scrape` - Extract text content from web pages  
-- `image_generation` - Generate images from text prompts
+- `web_search` - Search the web using DuckDuckGo with configurable result count and region
+- `web_scrape` - Extract text content from web pages with word limit options
+- `image_generation` - Generate images from text prompts with customizable dimensions and models
+- `text_to_audio` - Convert text to audio using Pollinations AI text-to-speech
+- `mark_it_down` - Convert URLs to markdown format
+- `code_generation` - Generate code in various programming languages based on text prompts
+- `file_read` - Read file contents from the filesystem with size limits
+- `file_write` - Write content to files with overwrite options
+- `file_list` - List files and directories with recursive options
+- `code_execute` - Execute Python code snippets safely in a subprocess environment
+- `code_execute_safe` - Execute Python code in a restricted environment using AST analysis
+- `git_tool` - Perform Git operations like clone, status, add, commit, push, pull, log, branch, and checkout
 
 For detailed MCP documentation, see [g4f/mcp/README.md](g4f/mcp/README.md)
 

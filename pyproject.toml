@@ -32,6 +32,9 @@ dependencies = [
     "BrotliCFFI",
     "pycryptodome",
     "nest_asyncio",
+    "beautifulsoup4>=4.14.2",
+    "markitdown[all]>=0.0.2",
+    "restrictedpython>=8.1",
 ]
 
 [project.optional-dependencies]

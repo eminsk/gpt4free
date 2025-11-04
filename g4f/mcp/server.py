@@ -19,7 +19,12 @@ from dataclasses import dataclass
 from ..debug import enable_logging
 
 from .tools import MarkItDownTool, TextToAudioTool, WebSearchTool, WebScrapeTool, ImageGenerationTool
-from .tools import WebSearchTool, WebScrapeTool, ImageGenerationTool
+from .code_generation_tool import CodeGenerationToolImpl
+from .file_tools import FileReaderTool, FileWriterTool, FileListTool
+from .code_execution_tool import CodeExecutionTool, SafeCodeExecutionTool
+from .git_tool import GitTool
+from .database_tool import DatabaseTool
+from .http_tool import HttpTool
 
 
 @dataclass
@@ -55,7 +60,16 @@ class MCPServer:
             'web_scrape': WebScrapeTool(),
             'image_generation': ImageGenerationTool(),
             'text_to_audio': TextToAudioTool(),
-            'mark_it_down': MarkItDownTool()
+            'mark_it_down': MarkItDownTool(),
+            'code_generation': CodeGenerationToolImpl(),
+            'file_read': FileReaderTool(),
+            'file_write': FileWriterTool(),
+            'file_list': FileListTool(),
+            'code_execute': CodeExecutionTool(),
+            'code_execute_safe': SafeCodeExecutionTool(),
+            'git_tool': GitTool(),
+            'database': DatabaseTool(),
+            'http_request': HttpTool()
         }
         self.server_info = {
             "name": "gpt4free-mcp-server",
@@ -102,6 +116,16 @@ class MCPServer:
                 tool_arguments = params.get("arguments", {})
                 tool_arguments.setdefault("origin", request.origin)
                 
+                if not tool_name:
+                    return MCPResponse(
+                        jsonrpc="2.0",
+                        id=request.id,
+                        error={
+                            "code": -32602,
+                            "message": "Missing tool name in parameters"
+                        }
+                    )
+                
                 if tool_name not in self.tools:
                     return MCPResponse(
                         jsonrpc="2.0",
@@ -113,7 +137,32 @@ class MCPServer:
                     )
                 
                 tool = self.tools[tool_name]
-                result = await tool.execute(tool_arguments)
+                
+                # Validate tool arguments against schema
+                try:
+                    result = await tool.execute(tool_arguments)
+                except Exception as e:
+                    return MCPResponse(
+                        jsonrpc="2.0",
+                        id=request.id,
+                        error={
+                            "code": -32603,
+                            "message": f"Tool execution error: {str(e)}"
+                        }
+                    )
+                
+                # Ensure result is serializable
+                try:
+                    json.dumps(result)
+                except TypeError:
+                    return MCPResponse(
+                        jsonrpc="2.0",
+                        id=request.id,
+                        error={
+                            "code": -32603,
+                            "message": "Tool result is not JSON serializable"
+                        }
+                    )
                 
                 return MCPResponse(
                     jsonrpc="2.0",
@@ -122,7 +171,7 @@ class MCPServer:
                         "content": [
                             {
                                 "type": "text",
-                                "text": json.dumps(result, indent=2)
+                                "text": json.dumps(result, indent=2, ensure_ascii=False)
                             }
                         ]
                     }
@@ -141,6 +190,15 @@ class MCPServer:
                     }
                 )
         
+        except json.JSONDecodeError as e:
+            return MCPResponse(
+                jsonrpc="2.0",
+                id=request.id,
+                error={
+                    "code": -32700,
+                    "message": f"Parse error: {str(e)}"
+                }
+            )
         except Exception as e:
             return MCPResponse(
                 jsonrpc="2.0",

@@ -233,6 +233,7 @@ g4f/locals/models.py
 g4f/locals/provider.py
 g4f/mcp/__init__.py
 g4f/mcp/__main__.py
+g4f/mcp/code_generation_tool.py
 g4f/mcp/server.py
 g4f/mcp/tools.py
 g4f/providers/__init__.py
