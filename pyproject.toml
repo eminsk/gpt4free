@@ -1,0 +1,92 @@
+[project]
+name = "gpt4free"
+version = "0.1.0"
+description = "The official gpt4free repository | various collection of powerful language models"
+readme = "README.md"
+requires-python = ">=3.14"
+license = { text = "MIT" }
+authors = [{ name = "Tekky", email = "support@g4f.ai" }]
+keywords = [
+    "gpt4free", "gpt4free.js", "g4f", "g4f.dev", "javascript", "npm", "browser",
+    "gpt", "chatgpt", "deepseek", "openai", "ai", "client", "sdk", "free",
+    "gpt-4", "gpt-4o", "chat", "api", "js", "text", "generation", "image",
+    "in-browser", "frontend", "alternative", "library", "nodejs", "prompt",
+    "engineering", "chatbot", "integration"
+]
+classifiers = [
+    'Development Status :: 2 - Pre-Alpha',
+    'Intended Audience :: Developers',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
+    'Operating System :: Unix',
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: Microsoft :: Windows',
+]
+
+dependencies = [
+    "requests",
+    "aiohttp",
+    "BrotliCFFI",
+    "pycryptodome",
+    "nest_asyncio",
+]
+
+[project.optional-dependencies]
+all = [
+    "curl_cffi>=0.6.2",
+    "certifi",
+    "browser_cookie3",
+    "beautifulsoup4",
+    "platformdirs",
+    "aiohttp_socks",
+    "pillow",
+    "cairosvg",
+    "werkzeug",
+    "flask",
+    "fastapi",
+    "uvicorn",
+    "nodriver",
+    "python-multipart",
+    "a2wsgi",
+    "setuptools",
+    "markitdown[all]",
+    "python-dotenv",
+    "aiofile"
+]
+slim = [
+    "curl_cffi>=0.6.2",
+    "certifi",
+    "browser_cookie3",
+    "beautifulsoup4",
+    "aiohttp_socks",
+    "pillow",
+    "werkzeug",
+    "flask",
+    "fastapi",
+    "uvicorn",
+    "nodriver",
+    "python-multipart",
+    "a2wsgi",
+    "pypdf2",
+    "python-docx",
+    "python-dotenv",
+    "aiofile"
+]
+image = ["pillow", "cairosvg", "beautifulsoup4"]
+webview = ["pywebview", "platformdirs", "plyer", "cryptography"]
+api = ["loguru", "fastapi", "uvicorn", "python-multipart", "a2wsgi"]
+gui = ["werkzeug", "flask", "beautifulsoup4", "pillow"]
+search = ["beautifulsoup4", "pillow"]
+local = ["gpt4all"]
+files = ["beautifulsoup4", "markitdown[all]"]
+
+[project.urls]
+"Source Code" = "https://github.com/xtekky/gpt4free"
+"Bug Tracker" = "https://github.com/xtekky/gpt4free/issues"
+
+[project.scripts]
+g4f = "g4f.cli:main"
+"g4f-mcp" = "g4f.mcp.server:main"
